@@ -1,40 +1,57 @@
 # Zomato Dashboard
 
-## Data loading:- Loading files to Power BI and then using Power Query to clean data.
+## Data loading:- 
+Loading files to Power BI and then using Power Query to clean data.
 
 ## Data cleaning:- 
-1-	using first row as header
+1-	using first row as header.
+
 2-	Merging queries from order table and restaurant table and renaming the merged column as City after filtering the data.
+
 3-	Looking for null values & then replacing it by Other
+
 4-	Unpivoting columns sales_qty & sales_amount to get them into row form
+
 5-	Renaming the unpivoted column as Type and replacing sales_qty as Quantity and sales_amount as Amount.
 
 ## DAX Queries Used:-
 1-	Sale Value - Sale_Value = SUM(orders[Value])
+
 2-	Top N Sales - TopN_Sales = VAR RankValue = RANKX(ALL(orders[restaurant.city]), [Sale_Value],, DESC)
 VAR SelectedRank= SELECTEDVALUE(RankTable[No])
 RETURN
 IF(SelectedRank=0, [Sale_Value],
 IF(RankValue <=SelectedRank, [Sale_Value], BLANK()))
+
 3-	Active Users - ActiveUsers = DISTINCTCOUNT(orders[user_id])
+
 4-	User Count - UserCount = DISTINCTCOUNT(users[user_id])
+
 5-	Current Year - CurrYear = 2020
+
 6-	Previous Year - PrevYear = [CurrYear] - 1
+
 7-	Current Year Sale - CurrYearSale = VAR Yr = [CurrYear]
 RETURN
 CALCULATE([Sale_Value], orders[Year] = Yr)
+
 8-	Previous Year Sale - PrevYearSale = VAR Yr = [PrevYear]
 RETURN
 CALCULATE([Sale_Value], orders[Year] = Yr)
+
 9-	Dynamic Sub-Heading - Dynamic SubHeading = "Zomato proving services in " & COUNT(orders[restaurant.city]) & " and connected with " &DISTINCTCOUNT(users[user_id]) & " where got " &COUNT(orders[user_id]) &" orders." 
+
 10-	Dynamic Top N Titles - Dynamic_TopN_Title = VAR SelectRank= SELECTEDVALUE(RankTable[Type])
 VAR SelectType= SELECTEDVALUE(orders[Type])
 RETURN
 SelectRank & " City " & SelectType
+
 11-	Customers Gained - GainCustomers = VAR FilterUsers =  FILTER(SUMMARIZE(users, users[user_id]), AND([PrevYearSale]<=0, [CurrYearSale]>0))
 RETURN CALCULATE([UserCount], FilterUsers)
+
 12-	Customers Lost - LostCustomers = VAR FilterUsers =  FILTER(SUMMARIZE(users, users[user_id]), AND([CurrYearSale]<=0, [PrevYearSale]>0))
 RETURN CALCULATE([UserCount], FilterUsers)
+
 13-	Ratings Count - Rating_Count = COUNT(restaurant[rating_count])
 
 # Dashboards:-
@@ -113,4 +130,3 @@ Dashboard Purpose: The City Performance Dashboard is designed to provide actiona
 •	Detailed Analysis: The table chart provides a granular view of city-specific metrics, supporting in-depth analysis and strategic planning.
 
 ### Conclusion: The City Performance Dashboard leverages data visualization to provide a comprehensive understanding of regional performance metrics. By focusing on key KPIs and using visual insights, businesses can enhance operational efficiency, improve customer satisfaction, and drive growth across diverse geographical markets.
-Create summary of the Zomato Power BI Dashboard containing three slides namely Overview, User Performance and City Performance. Below are the details of what these three dashboard slides contains within.
